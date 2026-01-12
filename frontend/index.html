@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CRS – Concept Explainer</title>
+
+<style>
+:root {
+    --bg: #0f172a;
+    --card: #020617;
+    --accent: #38bdf8;
+    --text: #e5e7eb;
+    --muted: #9ca3af;
+    --tile: #020617;
+    --tile-hover: #020617;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 30px;
+}
+
+.container {
+    max-width: 1100px;
+    margin: auto;
+    background: var(--card);
+    padding: 25px;
+    border-radius: 10px;
+}
+
+h2 {
+    margin-bottom: 15px;
+}
+
+input, button {
+    padding: 10px;
+    width: 100%;
+    margin-top: 8px;
+    border-radius: 6px;
+    border: none;
+}
+
+input {
+    background: #020617;
+    color: var(--text);
+}
+
+button {
+    background: var(--accent);
+    color: #020617;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+label {
+    font-size: 14px;
+    color: var(--muted);
+}
+
+.layout {
+    display: grid;
+    grid-template-columns: 3fr 1.2fr;
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.current {
+    background: #020617;
+    border-left: 4px solid var(--accent);
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.explanation {
+    white-space: pre-line;
+    line-height: 1.7;
+    font-size: 15px;
+    color: var(--text);
+}
+
+.section h4 {
+    margin-bottom: 10px;
+    color: var(--accent);
+}
+
+.tiles {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.tile {
+    background: var(--tile);
+    padding: 10px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--text);
+    border: 1px solid #020617;
+}
+
+.tile:hover {
+    background: var(--tile-hover);
+    border-color: var(--accent);
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Concept Explainer for Engineers</h2>
+
+    <input id="topic" placeholder="Enter topic (e.g. MOSFET basics)">
+    
+    <label>Time (minutes)</label>
+    <input type="range" id="time" min="2" max="15" value="5"
+           oninput="tval.innerText=this.value">
+    <span id="tval">5</span> min
+
+    <button onclick="search()">Explain</button>
+
+    <div class="layout">
+
+        <!-- MAIN CONTENT -->
+        <div>
+            <div id="currentTopic" class="current"></div>
+            <div class="explanation" id="output"></div>
+        </div>
+
+        <!-- RELATED TOPICS -->
+        <div class="section">
+            <h4>Related Topics</h4>
+            <div class="tiles" id="related"></div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+async function search() {
+    const topic = document.getElementById("topic").value;
+    const time = document.getElementById("time").value;
+
+    if (!topic) return;
+
+    document.getElementById("currentTopic").innerText = topic;
+
+    const res = await fetch("http://127.0.0.1:5000/recommend", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ topic: topic, time_minutes: time })
+    });
+
+    const data = await res.json();
+
+    document.getElementById("output").innerText =
+        data.explanation || "No explanation available.";
+
+    const relatedDiv = document.getElementById("related");
+    relatedDiv.innerHTML = "";
+
+    (data.related_topics || []).forEach(t => {
+        const d = document.createElement("div");
+        d.className = "tile";
+        d.innerText = t;
+        d.onclick = () => {
+            document.getElementById("topic").value = t;
+            search();
+        };
+        relatedDiv.appendChild(d);
+    });
+}
+</script>
+
+</body>
+</html>

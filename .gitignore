@@ -1,0 +1,17 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Environment variables
+.env
+
+# Vector database (local only)
+db/chroma/
+db/chroma_backup/
+
+# OS files
+.DS_Store
+Thumbs.db

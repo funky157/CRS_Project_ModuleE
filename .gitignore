@@ -15,3 +15,14 @@ db/chroma_backup/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Chroma DB (generated)
+backend/db/chroma/
+backend/db/chroma_backup/
+
+# Python cache
+__pycache__/
+.ipynb_checkpoints/
+
+# Environment
+.env

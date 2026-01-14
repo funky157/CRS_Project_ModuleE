@@ -1,6 +1,6 @@
 # Concept Recommender System for Engineers (CRS)
 
-## Module E – AI Applications (Individual Project)
+## Concept Explainer for Engineers
 
 ### Author
 Harish
